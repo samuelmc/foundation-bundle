@@ -1,0 +1,41 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Displays a form to edit an existing {{ entity }} entity.
+{% endblock phpdoc_method_header %}
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+     *
+     * @Route("/{{ route_prefix }}/{{ '{' ~ route_entity_parameter ~ '}' }}/edit", name="{{ route_name_prefix }}_edit")
+     * @Method({"GET", "POST"})
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function editAction(Request $request, {{ entity_class }} ${{ entity_singularized }}){% endblock method_definition %} {
+{% block method_body %}
+        $form = $this->createForm('{{ namespace }}\Form\{{ entity_class }}Type', ${{ entity_singularized }});
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist(${{ entity_singularized }});
+            $em->flush();
+
+            $this->addFlash('success', "Changes to the {{ entity_singularized }} has been saved.");
+
+            {% if 'show' in actions -%}
+                return $this->redirectToRoute('{{ route_name_prefix }}_show', ['{{ route_entity_parameter }}' => ${{ entity_class|lower }}->get{{ route_entity_parameter|replace('_', ' ')|capitalize|replace(' ', '') }}()]);
+            {%- else -%}
+                return $this->redirectToRoute('{{ route_name_prefix }}_index'));
+            {%- endif %}
+        }
+{% endblock method_body %}
+
+{% block method_return %}
+        return $this->render('@{{ bundle|slice(0, -6) ~ '/' ~ entity|replace({'\\': '/'}) }}/edit.html.twig', [
+            '{{ entity_singularized }}' => ${{ entity_singularized }},
+            'form' => $form->createView(),
+        ]);
+{% endblock method_return %}
+    }

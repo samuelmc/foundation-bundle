@@ -1,0 +1,43 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Deletes a {{ entity }} entity.
+{% endblock phpdoc_method_header %}
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+     *
+     * @Route("/{{ route_prefix }}/{{ '{' ~ route_entity_parameter ~ '}' }}", name="{{ route_name_prefix }}_delete")
+     * @Method({"GET","DELETE"})
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function deleteAction(Request $request, {{ entity_class }} ${{ entity_singularized }}){% endblock method_definition %} {
+{% block method_body %}
+        $form = $this->createFormBuilder()
+            ->setAction($this->generateUrl('{{ route_name_prefix }}_delete', ['{{ route_entity_parameter }}' => ${{ entity_singularized }}->get{{ route_entity_parameter|replace('_', ' ')|capitalize|replace(' ', '') }}()]))
+            ->setMethod('DELETE')
+            ->getForm()
+        ;
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove(${{ entity_singularized }});
+            $em->flush();
+
+            $this->addFlash('success', "The {{ entity_singularized }} have been deleted.");
+
+            return $this->redirectToRoute('{{ route_name_prefix }}_index');
+        }
+
+        $this->addFlash('warning', "You are about to delete a {{ entity_singularized }}, this action cannot be undone.");
+{% endblock method_body %}
+
+{% block method_return %}
+        return $this->render('@{{ bundle|slice(0, -6) ~ '/' ~ entity|replace({'\\': '/'}) }}/delete.html.twig', [
+            '{{ entity_singularized }}' => ${{ entity_singularized }},
+            'form' => $form->createView(),
+        ]);
+{% endblock method_return %}
+    }
