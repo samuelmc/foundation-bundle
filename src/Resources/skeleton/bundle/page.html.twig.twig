@@ -1,26 +1,6 @@
 {{ "{% extends '@Foundation/html.html.twig' %}" }}
 
 {{ '{%  block page %}' }}
-{{ "{{ include('@" ~ bundle|slice(0, -6) ~ "/Shared/header.html.twig') }}" }}
-
-    <div role="log" class="row log-messages">
-        {{ "{% for type, logs in app.session.flashbag.all %}" }}
-
-            <div class="{{ "{{ type }}" }} callout">
-                <button class="close-button" aria-label="Close {{ "{{ type }}" }} logs" type="button">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <ul>
-                    {{ "{% for log in logs %}" }}
-
-                        <li>{{ "{{ log }}" }}</li>
-                    {{ "{% endfor %}" }}
-
-                </ul>
-            </div>
-        {{ "{% endfor %}" }}
-
-    </div>
     <main class="row">
         {{ "{% block content %}" }}
         {{ "{% endblock %}" }}

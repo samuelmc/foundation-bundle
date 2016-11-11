@@ -61,7 +61,6 @@ class FdnBundleGenerator extends Generator
         $this->renderFile('bundle/DefaultControllerTest.php.twig', "$dir/Tests/Controller/DefaultControllerTest.php", $parameters);
         $this->renderFile('bundle/index.html.twig.twig', "$dir/Resources/views/Default/index.html.twig", $parameters);
         $this->renderFile('bundle/page.html.twig.twig', "$dir/Resources/views/Shared/page.html.twig", $parameters);
-        $this->renderFile('bundle/header.html.twig.twig', "$dir/Resources/views/Shared/header.html.twig", $parameters);
 
         // render the services.yml/xml file
         $servicesFilename = $bundle->getServicesConfigurationFilename();
