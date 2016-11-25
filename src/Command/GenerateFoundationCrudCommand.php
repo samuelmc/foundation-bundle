@@ -3,7 +3,7 @@
 namespace Foundation\Bundle\Command;
 
 use Foundation\Bundle\Generator\FdnCrudGenerator;
-use Foundation\Bundle\Utils\SkeletonFinder;
+use Foundation\Bundle\Utils\SkeletonTrait;
 use Sensio\Bundle\GeneratorBundle\Command\GenerateDoctrineCrudCommand;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Foundation\Bundle\Manipulator\FdnRoutingManipulator as RoutingManipulator;
@@ -19,13 +19,13 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Command\Command;
 
 class GenerateFoundationCrudCommand extends GenerateDoctrineCrudCommand {
+    use SkeletonTrait;
 
     protected function configure() {
         parent::configure();
-        $this
-            ->setName('foundation:generate:crud')
-            ->setAliases(array('generate:foundation:crud'))
-            ->setDescription('Generates a CRUD based on a Doctrine entity with a custom route parameter for the entity');
+        $this->setName('foundation:generate:crud')
+             ->setAliases(['generate:foundation:crud'])
+             ->setDescription('Generates a CRUD based on a Doctrine entity with a custom route parameter for the entity');
     }
 
     /**
@@ -45,12 +45,11 @@ class GenerateFoundationCrudCommand extends GenerateDoctrineCrudCommand {
         return $input->getOption('route-entity-parameter') ?: strtolower(str_replace(array('\\', '/'), '_', $entity));
     }
 
-    protected function getSkeletonDirs(BundleInterface $bundle = null) {
+    /*protected function getSkeletonDirs(BundleInterface $bundle = null) {
         return SkeletonFinder::getSkeletonDirs($bundle, $this->getContainer()->get('kernel')->getRootDir());
-    }
+    }*/
 
-    protected function createGenerator($bundle = null)
-    {
+    protected function createGenerator($bundle = null) {
         return new FdnCrudGenerator(
             $this->getContainer()->get('filesystem'),
             $this->getContainer()->getParameter('kernel.root_dir')
@@ -60,8 +59,7 @@ class GenerateFoundationCrudCommand extends GenerateDoctrineCrudCommand {
     /**
      * @see Command
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         $questionHelper = $this->getQuestionHelper();
 
         if ($input->isInteractive()) {
@@ -119,8 +117,7 @@ class GenerateFoundationCrudCommand extends GenerateDoctrineCrudCommand {
         $questionHelper->writeGeneratorSummary($output, $errors);
     }
 
-    protected function updateRouting(QuestionHelper $questionHelper, InputInterface $input, OutputInterface $output, BundleInterface $bundle, $format, $entity, $prefix)
-    {
+    protected function updateRouting(QuestionHelper $questionHelper, InputInterface $input, OutputInterface $output, BundleInterface $bundle, $format, $entity, $prefix) {
         $auto = true;
         if ($input->isInteractive()) {
             $question = new ConfirmationQuestion($questionHelper->getQuestion('Confirm automatic update of the Routing', 'yes', '?'), true);
